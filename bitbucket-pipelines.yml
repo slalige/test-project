@@ -1,0 +1,72 @@
+image: maven:3.6.1
+
+pipelines:
+  custom: # Pipelines that can only be triggered manually
+    intelligent-orchestration: # name of the pipeline
+      - step:
+          name: STAGE-IO
+          script:
+            - pipe: sig-devsecops/intelligent-security-scan:0.1.0
+              variables:
+                STAGE: 'IO'
+          artifacts:
+              - pipe.meta.env
+
+      - parallel:
+        - step:
+            name: SAST SCANNING
+            caches:
+              - maven
+            script:
+              - source pipe.meta.env
+              - >
+                if [ "$IS_SAST_ENABLED" = false ]; then
+                  echo "SAST Scanning is disbled."
+                  exit 0
+                fi
+              - wget -q $POLARIS_SERVER_URL/api/tools/polaris_cli-linux64.zip
+              - unzip -j polaris_cli-linux64.zip -d /tmp
+              - /tmp/polaris analyze -w
+            services:
+              - docker
+        - step:
+            name: SCA SCANNING
+            caches:
+              - maven
+            script:
+              - source pipe.meta.env
+              - >
+                if [ "$IS_SCA_ENABLED" = false ]; then
+                  echo "SCA Scanning is disbled."
+                  exit 0
+                fi
+              - >
+                bash <(curl -s https://detect.synopsys.com/detect.sh) \
+                --blackduck.url="https://bizdevhub.blackducksoftware.com" \
+                --blackduck.api.token="YWY0MzUyZmUtNzExNi00MDY3LWFhNTAtNWFiM2IxZTUyMmFiOjg2NWM0MmNjLWY3ZmYtNDE5YS1hZTEwLTE5Yjg0YWI2ZDQ5Yw" \
+                --detect.tools="SIGNATURE_SCAN,DETECTOR" \
+                --detect.force.success="false" \
+                --detect.wait.for.results="false" \
+                --detect.policy.check.fail.on.severities="UNSPECIFIED" \
+                --logging.level.com.synopsys.integration="INFO"
+            services:
+              - docker
+
+      - step:
+          name: STAGE-WORKFLOW
+          script:
+            - source pipe.meta.env
+            - >
+              if [ "$IS_SAST_ENABLED" = false ] && [ "$IS_SCA_ENABLED" = false ]; then
+                echo "Not performing WORKFLOW stage as all scanning activities are disabled."
+                exit 0
+              fi
+            - pipe: sig-devsecops/intelligent-security-scan:0.1.0
+              variables:
+                STAGE: 'WORKFLOW'
+                IS_SAST_ENABLED: $IS_SAST_ENABLED
+                IS_SCA_ENABLED: $IS_SCA_ENABLED
+definitions:
+  services:
+    docker:
+      memory: 3072

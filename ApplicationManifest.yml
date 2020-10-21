@@ -1,0 +1,33 @@
+application:
+  appId: TESTAPP
+  assetId: TESTAPP
+  release: minor
+  appName: "Test app 1"
+  sdlcType: EDM
+  appType: Webapp
+  webservice: false
+  restApi: true
+  microservice: false
+  projectLanguage: Java
+  frameworks: 
+   - Spring security
+   - Hibernate
+  platformVersion: Java 8
+  buildSystem: Maven
+  riskMatrixRevision: Rev1.0
+  sourceFilePattern: ".*\\+\\+\\+.*(\\.java|\\.jsp)+.*"
+  sensitivePackagePattern: ".*(\\+\\+\\+.*(org\\/hdivsamples\\/security)).*"
+  fileChangeThreshold: 20
+environment:
+  scm: "bitbucket"
+  scmOwner: "sig-devsecops"
+  scmRepositoryName: "vulnerable-web-app"
+  scmBranchName: "master"
+  bitbucketApiUrl: "https://api.bitbucket.org/2.0/repositories/"
+  bitbucketUserName: <<BITBUCKET_USERNAME>>
+  bitbucketPassword: <<BITBUCKET_PASSWORD>>
+  jiraProjectName: <<JIRA_PROJECT_NAME>>
+  jiraIssuesQuery: <<JIRA_ISSUES_QUERY>>
+  jiraApiUrl: <<JIRA_API_URL>>
+  jiraUserName: <<JIRA_USERNAME>>
+  jiraAuthToken: <<JIRA_AUTH_TOKEN>>

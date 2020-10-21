@@ -1,0 +1,44 @@
+---
+connectors:
+- connector_name: bitbucket
+  fields:
+    workspace_name: sig-devsecops
+    repository_name: vulnerable-web-app
+    commit_id: <<BITBUCKET_COMMIT_ID>>
+    username: <<BITBUCKET_USERNAME>>
+    app_password: <<BITBUCKET_PASSWORD>>
+---
+buildbreaker:
+- activityname: sast
+  status:
+  - new
+  - open
+  overallseverity:
+  - 
+  categories:
+  - name: cross-site scripting
+    severity: high
+  - name: sql injection
+    severity: high
+- activityname: sca
+  status:
+  - new
+  overallseverity:
+  - high
+  categories:
+  - name: cve-2015-2119
+    severity: medium
+---
+tool_information:
+- tool_name: polaris
+  enabled: <<IS_SAST_ENABLED>>
+  fields:
+    project_name: sig-devsecops/vulnerable-web-app
+    instance_url: <<POLARIS_SERVER_URL>>
+    auth_token: <<POLARIS_ACCESS_TOKEN>>
+- tool_name: blackduck
+  enabled: <<IS_SCA_ENABLED>>
+  fields:
+    project_name: vulnerable-web-app:1.0.0
+    instance_url: <<BLACKDUCK_SERVER_URL>>
+    auth_token: <<BLACKDUCK_ACCESS_TOKEN>>
