@@ -1,6 +1,6 @@
 application:
-  appId: TESTAPP
-  assetId: TESTAPP
+  appId: vulnerable-web-app
+  assetId: vulnerable-web-app
   release: minor
   appName: "Test app 1"
   sdlcType: EDM

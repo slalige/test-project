@@ -1,6 +1,6 @@
 security:
   activities:
     sast:
-      rescanThreshold: 0
+      rescanThreshold: 10
     sca:
-      rescanThreshold: 0
+      rescanThreshold: 10
