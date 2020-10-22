@@ -22,7 +22,7 @@ environment:
   scm: "bitbucket"
   scmOwner: "sig-devsecops"
   scmRepositoryName: "vulnerable-web-app"
-  scmBranchName: "master"
+  scmBranchName: <<SCM_BRANCH_NAME>>
   bitbucketApiUrl: "https://api.bitbucket.org/2.0/repositories/"
   bitbucketUserName: <<BITBUCKET_USERNAME>>
   bitbucketPassword: <<BITBUCKET_PASSWORD>>
