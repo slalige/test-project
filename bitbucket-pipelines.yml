@@ -5,7 +5,7 @@ definitions:
     - step: &STAGE-IO
         name: STAGE-IO
         script:
-          - pipe: sig-devsecops/intelligent-security-scan:0.1.1
+          - pipe: sig-devsecops/intelligent-security-scan:0.1.2
             variables:
               STAGE: 'IO'
         artifacts:
@@ -60,7 +60,7 @@ definitions:
               echo "Not performing WORKFLOW stage as all scanning activities are disabled."
               exit 0
             fi
-          - pipe: sig-devsecops/intelligent-security-scan:0.1.1
+          - pipe: sig-devsecops/intelligent-security-scan:0.1.2
             variables:
               STAGE: 'WORKFLOW'
               IS_SAST_ENABLED: $IS_SAST_ENABLED
