@@ -16,7 +16,7 @@ application:
   buildSystem: Maven
   riskMatrixRevision: Rev1.0
   sourceFilePattern: ".*\\+\\+\\+.*(\\.java|\\.jsp)+.*"
-  sensitivePackagePattern: ".*(\\+\\+\\+.*(org\\/hdivsamples\\/security)).*"
+  sensitivePackagePattern: ".*(\\+\\+\\+.*(com\\/example\\/security)).*"
   fileChangeThreshold: 20
 environment:
   scm: "bitbucket"
