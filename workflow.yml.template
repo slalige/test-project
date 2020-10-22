@@ -1,5 +1,10 @@
 ---
 connectors:
+connectors:
+- connector_name: slack
+  fields:
+    channelidentifier: <<SLACK_CHANNEL_ID>>
+    bearertoken: <<SLACK_TOKEN>>
 - connector_name: bitbucket
   fields:
     workspace_name: sig-devsecops
