@@ -1,6 +1,5 @@
 ---
 connectors:
-connectors:
 - connector_name: slack
   fields:
     channelidentifier: <<SLACK_CHANNEL_ID>>
