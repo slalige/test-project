@@ -28,6 +28,30 @@ definitions:
         services:
           - docker
 
+
+
+    - step: &SAST-SCANNING-INCREMENTAL
+        name: INCREMENTAL SAST SCANNING
+        caches:
+          - maven
+        script:
+          - source pipe.meta.env
+          - >
+            if [ "$IS_SAST_ENABLED" = false ]; then
+              echo "SAST Scanning is disbled."
+              exit 0
+            fi
+          - git fetch --verbose http://bitbucket.org/$BITBUCKET_REPO_FULL_NAME $BITBUCKET_PR_DESTINATION_BRANCH:target_branch 
+          - git tag -f fork_point $(git merge-base target_branch $BITBUCKET_COMMIT)
+          - git diff --name-only fork_point $BITBUCKET_COMMIT | egrep '[.java]$' >> "polaris-files-to-scan.txt"
+          - cat polaris-files-to-scan.txt
+          - wget $POLARIS_SERVER_URL/api/tools/polaris_cli-linux64.zip
+          - unzip -j polaris_cli-linux64.zip
+          - export POLARIS_FF_ENABLE_COVERITY_INCREMENTAL=true
+          - ./polaris -c polaris.yml analyze -w --coverity-ignore-capture-failure --incremental polaris-files-to-scan.txt | tee polaris-output.txt
+        services:
+          - docker
+
     - step: &SCA-SCANNING
         name: SCA SCANNING
         caches:
@@ -71,8 +95,8 @@ definitions:
       memory: 3072
 
 pipelines:
-  pull-requests:
-    '**':
+  branches:
+    master:
       - step: *STAGE-IO
 
       - parallel:
@@ -80,3 +104,14 @@ pipelines:
         - step: *SCA-SCANNING
 
       - step: *STAGE-WORKFLOW
+
+  pull-requests:
+    '**':
+      - step: *STAGE-IO
+
+      - parallel:
+        - step: *SAST-SCANNING-INCREMENTAL
+        - step: *SCA-SCANNING
+
+      - step: *STAGE-WORKFLOW
+      
