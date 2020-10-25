@@ -17,7 +17,10 @@ public class ActivityDaoImpl implements ActivityDao {
 
 	@Override
 	public List<Transaction> findTransactionsByCashAccountNumber(final String number) {
-		// todo - implement findTransactionsByCashAccountNumber feature
+		String sql = "SELECT * FROM transaction WHERE number = '" + number + "'";
+
+		List<Transaction> customers = jdbcTemplate.query(sql, BeanPropertyRowMapper.newInstance(Transaction.class));
+		return customers;
 	}
 	
 	@Override
