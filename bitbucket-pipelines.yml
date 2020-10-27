@@ -65,9 +65,32 @@ definitions:
             fi
           - >
             bash <(curl -s https://detect.synopsys.com/detect.sh) \
-            --blackduck.url="https://bizdevhub.blackducksoftware.com" \
-            --blackduck.api.token="YWY0MzUyZmUtNzExNi00MDY3LWFhNTAtNWFiM2IxZTUyMmFiOjg2NWM0MmNjLWY3ZmYtNDE5YS1hZTEwLTE5Yjg0YWI2ZDQ5Yw" \
+            --blackduck.url="$BLACKDUCK_SERVER_URL" \
+            --blackduck.api.token="$BLACKDUCK_ACCESS_TOKEN" \
             --detect.tools="SIGNATURE_SCAN,DETECTOR" \
+            --detect.force.success="false" \
+            --detect.wait.for.results="false" \
+            --detect.policy.check.fail.on.severities="UNSPECIFIED" \
+            --logging.level.com.synopsys.integration="INFO"
+        services:
+          - docker
+
+    - step: &SCA-SCANNING-FOR-PR
+        name: SCA SCANNING
+        caches:
+          - maven
+        script:
+          - source pipe.meta.env
+          - >
+            if [ "$IS_SCA_ENABLED" = false ]; then
+              echo "SCA Scanning is disbled."
+              exit 0
+            fi
+          - >
+            bash <(curl -s https://detect.synopsys.com/detect.sh) \
+            --blackduck.url="$BLACKDUCK_SERVER_URL" \
+            --blackduck.api.token="$BLACKDUCK_ACCESS_TOKEN" \
+            --detect.tools="DETECTOR" \
             --detect.force.success="false" \
             --detect.wait.for.results="false" \
             --detect.policy.check.fail.on.severities="UNSPECIFIED" \
@@ -111,7 +134,7 @@ pipelines:
 
       - parallel:
         - step: *SAST-SCANNING-INCREMENTAL
-        - step: *SCA-SCANNING
+        - step: *SCA-SCANNING-FOR-PR
 
       - step: *STAGE-WORKFLOW
       
