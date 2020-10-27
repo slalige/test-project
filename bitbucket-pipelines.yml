@@ -110,7 +110,7 @@ pipelines:
       - step: *STAGE-IO
 
       - parallel:
-        - step: *SAST-SCANNING
+        - step: *SAST-SCANNING-INCREMENTAL
         - step: *SCA-SCANNING
 
       - step: *STAGE-WORKFLOW
