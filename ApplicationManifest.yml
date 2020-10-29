@@ -1,7 +1,7 @@
-application:
+orapplication:
   appId: vulnerable-web-app
   assetId: vulnerable-web-app
-  release: minor
+  release: major
   appName: "Test app 1"
   sdlcType: EDM
   appType: Webapp
