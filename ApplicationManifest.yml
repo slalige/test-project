@@ -1,4 +1,4 @@
-orapplication:
+application:
   appId: vulnerable-web-app
   assetId: vulnerable-web-app
   release: major
