@@ -5,9 +5,12 @@ definitions:
     - step: &STAGE-IO
         name: STAGE-IO
         script:
-          - pipe: sig-devsecops/intelligent-security-scan:0.1.2
+          - pipe: sig-devsecops/intelligent-security-scan:0.1.3
             variables:
-              STAGE: 'IO'
+              STAGE: IO
+              RELEASE_TYPE: major
+              PERSONA: developer
+              SENSITIVE_PACKAGE_PATTERN: .*(\\\+\\\+\\\+.*(com\\\/example\\\/security)).*
         artifacts:
           - pipe.meta.env
 
@@ -27,8 +30,6 @@ definitions:
           - /tmp/polaris analyze -w
         services:
           - docker
-
-
 
     - step: &SAST-SCANNING-INCREMENTAL
         name: INCREMENTAL SAST SCANNING
@@ -107,9 +108,9 @@ definitions:
               echo "Not performing WORKFLOW stage as all scanning activities are disabled."
               exit 0
             fi
-          - pipe: sig-devsecops/intelligent-security-scan:0.1.2
+          - pipe: sig-devsecops/intelligent-security-scan:0.1.3
             variables:
-              STAGE: 'WORKFLOW'
+              STAGE: WORKFLOW
               IS_SAST_ENABLED: $IS_SAST_ENABLED
               IS_SCA_ENABLED: $IS_SCA_ENABLED     
     
@@ -118,15 +119,14 @@ definitions:
       memory: 3072
 
 pipelines:
-  branches:
-    master:
-      - step: *STAGE-IO
+  default:
+    - step: *STAGE-IO
 
-      - parallel:
-        - step: *SAST-SCANNING
-        - step: *SCA-SCANNING
+    - parallel:
+      - step: *SAST-SCANNING
+      - step: *SCA-SCANNING
 
-      - step: *STAGE-WORKFLOW
+    - step: *STAGE-WORKFLOW
 
   pull-requests:
     '**':
